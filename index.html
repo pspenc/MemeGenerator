@@ -1,0 +1,116 @@
+<title>Memes</title>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+<script src="http://version1.api.memegenerator.net/javascript.js"></script>
+<link rel="stylesheet" type="text/css" href="meme.css">
+</head>
+<body>
+
+<h>MEME GENERATOR</h>
+
+<p id="spotForFirstLine"></p>
+<div id="xkcdcontent"></div>
+
+<img id="meme"/>
+
+
+
+<p id="spotForSecondLine"></p>
+
+
+<form>
+    <input type="text" id="firstLine">
+    <input type="text" id="secondLine">
+    <button onclick= "you(event)">Generate Da Meme</button>
+</form>
+
+
+<script>
+var apiKey = "5e3704fc-64e8-4f57-b221-4be5c9eb2ffc";
+var seshKey;
+
+var genID;
+var imgID;
+
+
+    $.ajax({ 
+    type: "GET",
+    dataType: "json",
+    url: "http://version1.api.memegenerator.net//MgUser_Login?username=marcusLideal&password=kuriyami1&apiKey=5e3704fc-64e8-4f57-b221-4be5c9eb2ffc",
+    success: function(data){ 
+        
+        seshKey = data.result.loginSession.sessionKey; 
+        
+    }
+});
+
+function part1(){
+    var randNum = Math.floor(Math.random() * 20);
+    
+    
+    
+    $.ajax({ 
+    type: "GET",
+    dataType: "json",
+    url: "http://version1.api.memegenerator.net//Generators_Select_ByPopular?pageIndex=0&pageSize=20&days=&apiKey="+apiKey,
+    success: function(data){ 
+
+        
+        genID = data.result[randNum].generatorID;
+        imgID = data.result[randNum].imageID;
+        
+        document.getElementById("spotForFirstLine").innerHTML = document.getElementById("firstLine").value;
+        document.getElementById("spotForSecondLine").innerHTML = document.getElementById("secondLine").value;
+        $("#meme").attr({
+                src: "https://memegenerator.net/img/images/x500/"+data.result[randNum].imageID+".jpg",
+                title: data.result[randNum].imageID,
+                alt: data.result[randNum].imageID
+            })
+        
+        
+        
+    }
+    
+    });   
+    
+    
+    
+    
+    
+    
+    
+    
+}
+function part2(){
+    var line1 = document.getElementById("firstLine").value;
+    var line2 = document.getElementById("secondLine").value;
+    
+    
+    var finalURL = "http://version1.api.memegenerator.net//Instance_Create?sessionKey="+seshKey+"&languageCode=en&generatorID="+genID+"&imageID="+imgID+"&text0="+line1+"&text1="+line2+"&apiKey=5e3704fc-64e8-4f57-b221-4be5c9eb2ffc";
+    alert(finalURL);
+    $.ajax({ 
+    type: "GET",
+    dataType: "json",
+    url:finalURL ,
+    success: function(data){ 
+        
+        document.getElementById("spotForFirstLine").innerHTML = data.result.text0;
+        document.getElementById("spotForSecondLine").innerHTML = data.result.text1;
+        $("#meme").attr({
+                src: "https://memegenerator.net/img/images/x500/"+data.result.imageID+".jpg",
+                title: data.result.displayName,
+                alt: data.result.instanceUrl
+            })
+        }
+        });
+}
+
+function you(e){
+    e.preventDefault();
+    part1();
+    
+    
+}
+</script>
+
+
